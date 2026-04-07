@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mind Lab Enneagram</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body class="bg-slate-50">
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useState } = React;
+        const TYPE_DETAILS = {
+            1: { name: "개혁가", nickname: "완벽을 추구하는 사람", motivation: "옳은 일을 하는 것", prescription: "완벽하지 않아도 괜찮습니다." },
+            2: { name: "조력가", nickname: "사랑을 주는 사람", motivation: "필요한 존재가 되는 것", prescription: "자신을 먼저 돌보세요." },
+            3: { name: "성취자", nickname: "성공을 꿈꾸는 사람", motivation: "유능함을 증명하는 것", prescription: "존재 자체로 가치 있습니다." },
+            4: { name: "예술가", nickname: "특별한 감수성의 소유자", motivation: "자신을 표현하는 것", prescription: "현재의 평범함을 즐겨보세요." },
+            5: { name: "탐구자", nickname: "지식을 즐기는 사람", motivation: "세상을 이해하는 것", prescription: "세상 밖으로 한 걸음 나오세요." },
+            6: { name: "충실가", nickname: "신중한 수호자", motivation: "안전을 확보하는 것", prescription: "스스로를 믿으셔도 됩니다." },
+            7: { name: "열정가", nickname: "즐거움을 찾는 사람", motivation: "행복을 누리는 것", prescription: "가끔은 멈춰 서서 깊이 생각해보세요." },
+            8: { name: "도전가", nickname: "강한 추진력의 리더", motivation: "자신을 보호하는 것", prescription: "약한 모습을 보여도 안전합니다." },
+            9: { name: "평화주의자", nickname: "조화를 꿈꾸는 사람", motivation: "평화를 유지하는 것", prescription: "당신의 목소리를 더 크게 내세요." }
+        };
+        const QUESTIONS = [
+            { t: 1, s: "완벽을 기하며 실수를 싫어한다." }, { t: 2, s: "남을 돕는 것을 좋아한다." },
+            { t: 3, s: "목표 달성과 성취가 중요하다." }, { t: 4, s: "나만의 독특한 개성이 있다." },
+            { t: 5, s: "관찰하고 분석하는 것을 즐긴다." }, { t: 6, s: "신중하고 미래를 대비한다." },
+            { t: 7, s: "즐겁고 새로운 계획이 많다." }, { t: 8, s: "주도권을 쥐는 것을 좋아한다." },
+            { t: 9, s: "갈등을 피하고 평화를 원한다." }
+        ];
+        function App() {
+            const [p, setP] = useState('S'); const [idx, setIdx] = useState(0);
+            const [sc, setSc] = useState({ 1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0 });
+            const handleAns = (v) => {
+                const newSc = { ...sc, [QUESTIONS[idx].t]: sc[QUESTIONS[idx].t] + v }; setSc(newSc);
+                if (idx < QUESTIONS.length - 1) setIdx(idx + 1); else setP('R');
+            };
+            const getRes = () => {
+                let m = 1, max = -1;
+                Object.entries(sc).forEach(([t, s]) => { if (s > max) { max = s; m = parseInt(t); } });
+                return m;
+            };
+            if (p === 'S') return <div className="p-10 text-center"><h1 className="text-3xl font-black mb-8">에니어그램 진단</h1><button onClick={()=>setP('Q')} className="p-5 bg-black text-white rounded-xl w-full">시작하기</button></div>;
+            if (p === 'Q') return <div className="p-10"><h2 className="text-xl font-bold mb-6">{QUESTIONS[idx].s}</h2><div className="grid gap-2">{[5,4,3,2,1].map(v=><button key={v} onClick={()=>handleAns(v)} className="p-4 border rounded-xl hover:bg-slate-100">{v===5?"매우 그렇다":v===4?"그렇다":v===3?"보통":v===2?"아니오":"전혀 아니다"}</button>)}</div></div>;
+            const resId = getRes(); const d = TYPE_DETAILS[resId];
+            return <div className="p-10 text-center space-y-4"><div className="text-5xl font-black text-indigo-600">{resId}번</div><h2 className="text-2xl font-bold">{d.name}</h2><p className="text-slate-500">{d.nickname}</p><div className="bg-white p-6 rounded-xl border text-left"><p><strong>동기:</strong> {d.motivation}</p><p><strong>조언:</strong> {d.prescription}</p></div><button onClick={()=>window.location.reload()} className="p-4 text-slate-400">다시하기</button></div>;
+        }
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+</body>
+</html>
